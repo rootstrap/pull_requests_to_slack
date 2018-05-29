@@ -16,7 +16,7 @@ class SlackNotificationService
   end
 
   def send_notification
-    send(ACTION_METHODS[action])
+    send(ACTION_METHODS[action]) if ACTION_METHODS.key? action
   end
 
   private
@@ -54,7 +54,11 @@ class SlackNotificationService
   def delete_message(matches)
     matches.each do |match|
       timestamp = match[:ts]
-      client.chat_delete(channel: CHANNEL, ts: timestamp) if timestamp
+      begin
+        client.chat_delete(channel: CHANNEL, ts: timestamp) if timestamp
+      rescue Exception => ex
+        puts "An error of type #{ex.class} happened, message is #{ex.message}."
+      end
     end
   end
 
