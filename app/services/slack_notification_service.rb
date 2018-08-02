@@ -28,7 +28,9 @@ class SlackNotificationService
   private
 
   def notify_pull_request
-    client.chat_postMessage(channel: CHANNEL, text: message)
+    username = extra_params[:pull_request][:user][:login]
+    icon_url = extra_params[:pull_request][:user][:avatar_url]
+    client.chat_postMessage(channel: CHANNEL, text: message, as_user: false, username: username, icon_url: icon_url )
   end
 
   def filter_unlabeled_action

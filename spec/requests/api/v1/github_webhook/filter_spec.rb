@@ -8,7 +8,11 @@ describe 'GET api/v1/notifications_filter', type: :request do
     {
       html_url: pull_request_link,
       title: 'Update the README with new information',
-      ts: '1234'
+      ts: '1234',
+      user: {
+        login: 'user',
+        avatar_url: 'image.png'
+      }
     }
   end
 
@@ -25,7 +29,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
 
     it 'sends a slack notification to a given channel with the PR notification' do
       expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-        .with(channel: channel, text: message)
+        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
 
       post api_v1_notifications_filter_path, params: params, as: :json
     end
@@ -61,7 +65,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
 
     it 'sends a slack notification to a given channel with the PR notification and language emoji' do
       expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-        .with(channel: channel, text: message)
+        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
 
       post api_v1_notifications_filter_path, params: params, as: :json
     end
