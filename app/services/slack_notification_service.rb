@@ -4,6 +4,12 @@ class SlackNotificationService
     'unlabeled' => :filter_unlabeled_action,
     'labeled' => :filter_on_hold_labeled_action
   }.freeze
+  EMOJI_HASH =  {
+    'JavaScript' => ':react:',
+    'TypeScript' => ':react:',
+    'Ruby' => ':rubyonrails:',
+    'Swift' => ':iphone:'
+  }.freeze
   ON_HOLD = 'ON HOLD'.freeze
   CHANNEL = '#code-review'.freeze
 
@@ -22,8 +28,7 @@ class SlackNotificationService
   private
 
   def notify_pull_request
-    pull_request_url = extra_params[:pull_request][:html_url]
-    client.chat_postMessage(channel: CHANNEL, text: pull_request_url)
+    client.chat_postMessage(channel: CHANNEL, text: message)
   end
 
   def filter_unlabeled_action
@@ -65,4 +70,15 @@ class SlackNotificationService
   def on_hold?(label)
     label.downcase == ON_HOLD.downcase
   end
+
+  def message
+    pull_request_url = extra_params[:pull_request][:html_url]
+    language = extra_params[:repository][:language]
+    "#{pull_request_url} #{language_emoji(language)}"
+  end
+  
+  def language_emoji(language)
+    EMOJI_HASH.fetch language, "[#{language}]"
+  end
+
 end
