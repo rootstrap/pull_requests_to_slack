@@ -30,10 +30,12 @@ To get the credentials: log in to https://api.slack.com/apps, select your applic
 - Create/edit pull request adding or removing labels. This will execute the webhook.
 
 ## Deploy to Heroku
+Install heroku cli https://devcenter.heroku.com/articles/heroku-cli#download-and-install
+
 ```
-git remote -v
-heroku git:remote -a rootstrap-github-for-slack
+heroku login
 enter credentials
+heroku git:remote -a rootstrap-github-for-slack
 git push heroku master
 ```
 
