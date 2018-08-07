@@ -5,10 +5,15 @@ class SlackNotificationService
     'labeled' => :filter_on_hold_labeled_action
   }.freeze
   EMOJI_HASH =  {
-    'JavaScript' => ':react:',
-    'TypeScript' => ':react:',
-    'Ruby' => ':rubyonrails:',
-    'Swift' => ':iphone:'
+    'JavaScript' => ':javascript:',
+    'TypeScript' => ':javascript:',
+    'Ruby' => ':ruby:',
+    'Java' => ':java:',
+    'Kotlin' => ':kotlin:',
+    'Swift' => ':swift:',
+    'React' => ':react:',
+    'React-Native' => ':react_native:',
+    'Angular' => ':angular:'
   }.freeze
   ON_HOLD = 'ON HOLD'.freeze
   CHANNEL = '#code-review'.freeze
@@ -76,10 +81,18 @@ class SlackNotificationService
   def message
     pull_request_url = extra_params[:pull_request][:html_url]
     language = extra_params[:repository][:language]
-    "#{pull_request_url} #{language_emoji(language)}"
+    repo_name = extra_params[:repository][:name].downcase
+    "#{pull_request_url} #{language_emoji(language, repo_name)}"
   end
   
-  def language_emoji(language)
+  def language_emoji(language, repo_name)
+    if repo_name.include? 'react-native' or repo_name.include? 'reactnative'
+      language = 'React-Native'
+    elsif repo_name.include? 'react'
+      language = 'React'
+    elsif repo_name.include? 'angular'
+      language = 'Angular'
+    end
     EMOJI_HASH.fetch language, "[#{language}]"
   end
 
