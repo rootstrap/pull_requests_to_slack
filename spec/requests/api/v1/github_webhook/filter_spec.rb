@@ -3,12 +3,13 @@ require 'rails_helper'
 describe 'GET api/v1/notifications_filter', type: :request do
   let(:channel) {'#code-review'}
   let(:pull_request_link) { 'https://github.com/rootstrap/example-project/pull/1' }
-  let(:message) { "#{pull_request_link} :javascript:" }
+  let(:message) { "#{pull_request_link} <@user> Tiny PR :javascript:" }
   let(:pull_request) do
     {
       html_url: pull_request_link,
       title: 'Update the README with new information',
       ts: '1234',
+      body: 'This is the body \slack @user Tiny PR',
       user: {
         login: 'user',
         avatar_url: 'image.png'
@@ -41,7 +42,19 @@ describe 'GET api/v1/notifications_filter', type: :request do
       end
       it 'sends a slack notification to a given channel with the PR notification and specific language emoji' do
         expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-          .with(channel: channel, text: "#{pull_request_link} :react_native:", as_user: false, username: 'user', icon_url: 'image.png')
+          .with(channel: channel, text: "#{pull_request_link} <@user> Tiny PR :react_native:", as_user: false, username: 'user', icon_url: 'image.png')
+
+        post api_v1_notifications_filter_path, params: params, as: :json
+      end
+    end
+    
+    context 'pr body does not include a \slack message' do
+      before do
+        pull_request[:body] = "This is a simple body"
+      end
+      it 'sends a slack notification to a given channel with the PR notification and specific language emoji' do
+        expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
+          .with(channel: channel, text: "#{pull_request_link}  :javascript:", as_user: false, username: 'user', icon_url: 'image.png')
 
         post api_v1_notifications_filter_path, params: params, as: :json
       end
