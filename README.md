@@ -31,11 +31,15 @@ To get the credentials: log in to https://api.slack.com/apps, select your applic
 
 ## Deploy to Heroku
 Install heroku cli https://devcenter.heroku.com/articles/heroku-cli#download-and-install
-
+* Setup:
 ```
 heroku login
 enter credentials
 heroku git:remote -a rootstrap-github-for-slack
+```
+
+* Push:
+```
 git push heroku master
 ```
 
