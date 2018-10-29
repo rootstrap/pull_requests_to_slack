@@ -46,7 +46,7 @@ git push heroku master
 ## Docs and Backlog
 
 #### Backlog
-[Acess the Trello board](https://trello.com/invite/b/r6hhrp56/7251cf848a9a95e2362432ba986b5185/rs-github-for-slack)
+[Access the Trello board](https://trello.com/invite/b/r6hhrp56/7251cf848a9a95e2362432ba986b5185/rs-github-for-slack)
 
 #### Ngrok
 Public URLs for exposing your local web server
