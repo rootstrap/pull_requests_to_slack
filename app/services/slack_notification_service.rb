@@ -14,7 +14,8 @@ class SlackNotificationService
     'React' => ':react:',
     'React-Native' => ':react_native:',
     'Angular' => ':angular:',
-    'Python' => ':python:'
+    'Python' => ':python:',
+    'HTML' => ':html5:'
   }.freeze
   ON_HOLD = 'ON HOLD'.freeze
   CHANNEL = '#code-review'.freeze
