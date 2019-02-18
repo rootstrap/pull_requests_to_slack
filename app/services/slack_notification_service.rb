@@ -87,7 +87,7 @@ class SlackNotificationService
     slack_body = extract_slack_body extra_params[:pull_request][:body]
     "#{pull_request_url} #{slack_body} #{language_emoji(language, repo_name)}"
   end
-  
+
   def extract_slack_body(body)
     body = body.gsub("\r\n",' ').split('\slack ')[1] || ''
     format_body body
@@ -100,7 +100,7 @@ class SlackNotificationService
   end
 
   def language_emoji(language, repo_name)
-    if repo_name.include? 'react-native' or repo_name.include? 'reactnative'
+    if repo_name.include? 'react-native' or repo_name.include? 'reactnative'  or repo_name.ends_with? '-rn'
       language = 'React-Native'
     elsif repo_name.include? 'react'
       language = 'React'
