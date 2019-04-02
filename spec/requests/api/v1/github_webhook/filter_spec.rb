@@ -64,7 +64,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
   context 'when there is a closed pull request notification' do
     let(:params) do
       {
-        action: 'merged',
+        action: 'closed',
         pull_request: pull_request
       }
     end
@@ -77,6 +77,64 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
   end
 
+  context 'when there is a merged pull request notification' do
+    let(:params) do
+      {
+        action: 'closed',
+        pull_request: pull_request.merge('merged' => true)
+      }
+    end
+
+    it ' adds the merged reaction' do
+      expect_any_instance_of(Slack::Web::Client).to receive(:search_messages)
+        .and_return(messages: { matches: [{ ts: '1234' }] })
+      expect_any_instance_of(Slack::Web::Client).to receive(:reactions_add)
+        .with(name: :merged, channel: channel, timestamp:'1234', as_user: false )
+
+      post api_v1_notifications_filter_path, params: params, as: :json
+    end
+  end
+
+  context 'when there is an draft request notification' do
+    let(:params) do
+      {
+        action: 'opened',
+        pull_request: pull_request.merge('draft' => true),
+        repository: {
+          language: 'JavaScript',
+          name: 'example'
+        }
+      }
+    end
+
+    it 'does not sends a slack notification to a given channel with the PR notification' do
+      expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
+        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
+
+      post api_v1_notifications_filter_path, params: params, as: :json
+    end
+  end
+
+  context 'when there is an ready_for_review request notification' do
+    let(:params) do
+      {
+        action: 'ready_for_review',
+        pull_request: pull_request,
+        repository: {
+          language: 'JavaScript',
+          name: 'example'
+        }
+      }
+    end
+
+    it 'does not sends a slack notification to a given channel with the PR notification' do
+      expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
+        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
+
+      post api_v1_notifications_filter_path, params: params, as: :json
+    end
+  end
+  
   context 'when the "on hold" label is removed' do
     let(:params) do
       {
