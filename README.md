@@ -24,7 +24,7 @@ To get the credentials: log in to https://api.slack.com/apps, select your applic
 - Create a dummy repository in github with a couple branches.
 - Run server:  `rails s -p 3001`
 - In another terminal run ngrok: `ngrok http 3001`
-- Copy ngrok url to github configuration page (settings->hooks)
+- Copy ngrok url to github configuration page (settings->webhooks)
 `http://xxxxxxx.ngrok.io/api/v1/notifications_filter`
 - Change CHANNEL in SlackNotificationService to your `@name` or `#some_test_channel`
 - Create/edit pull request adding or removing labels. This will execute the webhook.
@@ -46,7 +46,7 @@ git push heroku master
 ## Docs and Backlog
 
 #### Backlog
-[Acess the Trello board](https://trello.com/invite/b/r6hhrp56/7251cf848a9a95e2362432ba986b5185/rs-github-for-slack)
+[Access the Trello board](https://trello.com/invite/b/r6hhrp56/7251cf848a9a95e2362432ba986b5185/rs-github-for-slack)
 
 #### Ngrok
 Public URLs for exposing your local web server
