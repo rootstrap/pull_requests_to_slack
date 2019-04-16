@@ -85,7 +85,7 @@ class SlackNotificationService
     response = client_find.search_messages(channel: CHANNEL, query: "#{text} in:#{CHANNEL}")
     response.dig(:messages, :matches)
   end
-  
+
   def delete_message(matches)
     matches.each do |match|
       timestamp = match[:ts]
