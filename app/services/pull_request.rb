@@ -1,12 +1,15 @@
 class PullRequest
   ON_HOLD = 'ON HOLD'.freeze
-  attr_reader :username, :avatar_url, :webhook_label, :url
+  attr_reader :username, :avatar_url, :webhook_label, :url, :language, :repo_name, :body
 
   def initialize(params)
     @username = params.dig(:pull_request, :user, :login)
     @avatar_url = params.dig(:pull_request, :user, :avatar_url)
     @webhook_label = params.dig(:github_webhook, :label, :name)
     @url = params.dig(:pull_request, :html_url)
+    @language = params.dig(:repository, :language)
+    @repo_name = params.dig(:repository, :name)&.downcase
+    @body = params.dig(:pull_request, :body)
     @params = params
   end
 
