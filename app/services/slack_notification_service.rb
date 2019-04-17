@@ -7,28 +7,14 @@ class SlackNotificationService
     'closed' => :filter_closed_action,
   }.freeze
 
-  EMOJI_HASH =  {
-    'JavaScript' => ':javascript:',
-    'TypeScript' => ':javascript:',
-    'Ruby' => ':ruby:',
-    'Java' => ':java:',
-    'Kotlin' => ':kotlin:',
-    'Swift' => ':swift:',
-    'React' => ':react:',
-    'React-Native' => ':react_native:',
-    'Angular' => ':angular:',
-    'Python' => ':python:',
-    'HTML' => ':html5:'
-  }.freeze
-
   CHANNEL = '#code-review'.freeze
 
-  attr_reader :action, :extra_params, :client, :pr
+  attr_reader :action, :extra_params, :slack_bot, :pr
 
   def initialize(params)
     @action = params[:github_webhook][:action]
     @extra_params = params
-    @client = Slack::Web::Client.new
+    @slack_bot = SlackBot.new(channel: CHANNEL)
     @pr = PullRequest.new(params)
   end
 
@@ -39,7 +25,8 @@ class SlackNotificationService
   private
 
   def notify_pull_request
-    client.chat_postMessage(channel: CHANNEL, text: message, as_user: false, username: @pr.username, icon_url: @pr.avatar_url )
+    message = @slack_bot.message(@pr)
+    @slack_bot.notify(message, @pr.username, @pr.avatar_url)
   end
 
   def filter_unlabeled_action
@@ -48,8 +35,8 @@ class SlackNotificationService
 
   def filter_on_hold_labeled_action
     return unless @pr.on_hold_webhook?
-    matches = find_message @pr.url
-    delete_message matches
+    matches = @slack_bot.find_message @pr.url
+    @slack_bot.delete_message matches
   end
 
   def filter_opened_action
@@ -65,73 +52,8 @@ class SlackNotificationService
   end
 
   def filter_merged_action
-    matches = find_message @pr.url
-    add_merge_emoji matches
+    matches = @slack_bot.find_message @pr.url
+    @slack_bot.add_merge_emoji matches
   end
 
-  def add_merge_emoji(matches)
-    matches.each do |match|
-      timestamp = match[:ts]
-      begin
-        add_emoji :merged, timestamp
-      rescue Exception => ex
-        puts "An error of type #{ex.class} happened, message is #{ex.message}."
-      end
-    end
-  end
-
-  def find_message(text)
-    client_find = Slack::Web::Client.new(token: ENV['SLACK_API_TOKEN'])
-    response = client_find.search_messages(channel: CHANNEL, query: "#{text} in:#{CHANNEL}")
-    response.dig(:messages, :matches)
-  end
-
-  def delete_message(matches)
-    matches.each do |match|
-      timestamp = match[:ts]
-      begin
-        client.chat_delete(channel: CHANNEL, ts: timestamp) if timestamp
-      rescue Exception => ex
-        puts "An error of type #{ex.class} happened, message is #{ex.message}."
-      end
-    end
-  end
-
-  def message
-    pull_request_url = extra_params[:pull_request][:html_url]
-    language = extra_params[:repository][:language]
-    repo_name = extra_params[:repository][:name].downcase
-    slack_body = extract_slack_body extra_params[:pull_request][:body]
-    "#{pull_request_url} #{slack_body} #{language_emoji(language, repo_name)}"
-  end
-
-  def extract_slack_body(body)
-    body = body.gsub("\r\n",' ').split('\slack ')[1] || ''
-    format_body body
-  end
-
-  # To show the notification @test it should be formatted like <@test>
-  # https://api.slack.com/docs/message-formatting
-  def format_body(body)
-    body.gsub(/([@#][A-Za-z0-9_]+)/, "<\\1>")
-  end
-
-  def language_emoji(language, repo_name)
-    if repo_name.include? 'react-native' or repo_name.include? 'reactnative'  or repo_name.ends_with? '-rn'
-      language = 'React-Native'
-    elsif repo_name.include? 'react'
-      language = 'React'
-    elsif repo_name.include? 'angular'
-      language = 'Angular'
-    end
-    EMOJI_HASH.fetch language, "[#{language}]"
-  end
-
-  def add_emoji(emoji, timestamp)
-    client.reactions_add(
-      name: emoji,
-      channel: CHANNEL,
-      timestamp: timestamp,
-      as_user: false)
-  end
 end
