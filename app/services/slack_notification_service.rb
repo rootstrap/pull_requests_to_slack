@@ -6,6 +6,7 @@ class SlackNotificationService
     'labeled' => :filter_on_hold_labeled_action,
     'closed' => :filter_closed_action,
   }.freeze
+
   EMOJI_HASH =  {
     'JavaScript' => ':javascript:',
     'TypeScript' => ':javascript:',
@@ -20,15 +21,15 @@ class SlackNotificationService
     'HTML' => ':html5:'
   }.freeze
 
-  ON_HOLD = 'ON HOLD'.freeze
   CHANNEL = '#code-review'.freeze
 
-  attr_reader :action, :extra_params, :client
+  attr_reader :action, :extra_params, :client, :pr
 
   def initialize(params)
     @action = params[:github_webhook][:action]
     @extra_params = params
     @client = Slack::Web::Client.new
+    @pr = PullRequest.new(params)
   end
 
   def send_notification
@@ -38,42 +39,33 @@ class SlackNotificationService
   private
 
   def notify_pull_request
-    username = extra_params[:pull_request][:user][:login]
-    icon_url = extra_params[:pull_request][:user][:avatar_url]
-    client.chat_postMessage(channel: CHANNEL, text: message, as_user: false, username: username, icon_url: icon_url )
+    client.chat_postMessage(channel: CHANNEL, text: message, as_user: false, username: @pr.username, icon_url: @pr.avatar_url )
   end
 
   def filter_unlabeled_action
-    label_name = extra_params[:github_webhook][:label][:name]
-    notify_pull_request if on_hold_label? label_name
+    notify_pull_request if @pr.on_hold_webhook?
   end
 
   def filter_on_hold_labeled_action
-    label_name = extra_params[:github_webhook][:label][:name]
-    pull_request_url = extra_params[:pull_request][:html_url]
-    return unless on_hold_label?(label_name)
-
-    matches = find_message pull_request_url
+    return unless @pr.on_hold_webhook?
+    matches = find_message @pr.url
     delete_message matches
   end
 
   def filter_opened_action
-    is_draft = extra_params[:pull_request][:draft]
-    notify_pull_request unless on_hold_pr? || is_draft
+    notify_pull_request unless @pr.on_hold? || @pr.is_draft?
   end
 
   def filter_ready_for_review_action
-    notify_pull_request unless on_hold_pr?
+    notify_pull_request unless @pr.on_hold?
   end
 
   def filter_closed_action
-    is_merged = extra_params[:pull_request][:merged]
-    filter_merged_action if is_merged
+    filter_merged_action if @pr.is_merged?
   end
 
   def filter_merged_action
-    pull_request_url = extra_params[:pull_request][:html_url]
-    matches = find_message pull_request_url
+    matches = find_message @pr.url
     add_merge_emoji matches
   end
 
@@ -103,15 +95,6 @@ class SlackNotificationService
         puts "An error of type #{ex.class} happened, message is #{ex.message}."
       end
     end
-  end
-
-  def on_hold_label?(label)
-    label.downcase == ON_HOLD.downcase
-  end
-
-  def on_hold_pr?
-    labels = extra_params[:pull_request][:labels]
-    labels&.any? { |label| on_hold_label? label[:name] }
   end
 
   def message
