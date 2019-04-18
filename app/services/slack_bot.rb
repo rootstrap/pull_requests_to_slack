@@ -24,7 +24,7 @@ class SlackBot
 
   def notify(message, username, avatar_url)
     client.chat_postMessage(channel: @channel, text: message, as_user: false, 
-                            username: username, icon_url: avatar_url )
+                            username: username, icon_url: avatar_url)
   end
 
   def add_merge_emoji(matches)

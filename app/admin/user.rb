@@ -1,12 +1,13 @@
 ActiveAdmin.register User do
-  permit_params :email, :first_name, :last_name, :username
+  permit_params :email, :first_name, :last_name, :github_name, :blacklisted
 
   form do |f|
     f.inputs 'Details' do
       f.input :email
       f.input :first_name
       f.input :last_name
-      f.input :username
+      f.input :github_name
+      f.input :blacklisted
     end
 
     actions
@@ -18,19 +19,19 @@ ActiveAdmin.register User do
     column :email
     column :first_name
     column :last_name
-    column :username
-    column :sign_in_count
+    column :github_name
+    column :blacklisted
     column :created_at
     column :updated_at
-
     actions
   end
 
   filter :id
   filter :email
-  filter :username
+  filter :github_name
   filter :first_name
   filter :last_name
+  filter :blacklisted
   filter :created_at
   filter :updated_at
 
@@ -40,8 +41,8 @@ ActiveAdmin.register User do
       row :email
       row :first_name
       row :last_name
-      row :username
-      row :sign_in_count
+      row :github_name
+      row :blacklisted
       row :created_at
       row :updated_at
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161027190856) do
+ActiveRecord::Schema.define(version: 20190418132233) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,27 +49,14 @@ ActiveRecord::Schema.define(version: 20161027190856) do
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "email"
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.boolean "allow_password_change", default: false
-    t.datetime "remember_created_at"
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.inet "current_sign_in_ip"
-    t.inet "last_sign_in_ip"
     t.string "first_name", default: ""
     t.string "last_name", default: ""
-    t.string "username", default: ""
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "provider", default: "email", null: false
-    t.string "uid", default: "", null: false
-    t.json "tokens"
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
+    t.string "github_name"
+    t.string "slack_name"
+    t.boolean "blacklisted", default: false
+    t.index ["github_name"], name: "index_users_on_github_name"
   end
 
 end
