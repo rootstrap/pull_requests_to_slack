@@ -30,33 +30,28 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     it 'sends a slack notification to a given channel with the PR notification' do
-      expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
-
-      post api_v1_notifications_filter_path, params: params, as: :json
+      expect_notification
     end
 
     context 'repo name includes a language' do
-      before do
-        params[:repository][:name] = 'example-React-Native'
-      end
       it 'sends a slack notification to a given channel with the PR notification and specific language emoji' do
-        expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-          .with(channel: channel, text: "#{pull_request_link} <@user> Tiny PR :react_native:", as_user: false, username: 'user', icon_url: 'image.png')
-
-        post api_v1_notifications_filter_path, params: params, as: :json
+        params[:repository][:name] = 'example-React-Native'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :react_native:")
       end
     end
     
     context 'pr body does not include a \slack message' do
-      before do
-        pull_request[:body] = "This is a simple body"
-      end
       it 'sends a slack notification to a given channel with the PR notification and specific language emoji' do
-        expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-          .with(channel: channel, text: "#{pull_request_link}  :javascript:", as_user: false, username: 'user', icon_url: 'image.png')
+        pull_request[:body] = "This is a simple body"
+        expect_notification(text: "#{pull_request_link}  :javascript:")
+      end
+    end
 
-        post api_v1_notifications_filter_path, params: params, as: :json
+    context 'when the user is blacklisted' do
+      let!(:user) { create(:user, github_name: 'blacklisted_user', blacklisted: true) }
+      it 'does not sends a slack notification to a given channel with the PR notification' do
+        pull_request[:user][:login] = "blacklisted_user"
+        expect_not_notification
       end
     end
   end
@@ -70,10 +65,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     it 'does NOT send a notification' do
-      expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
-        .with(channel: channel, text: message)
-
-      post api_v1_notifications_filter_path, params: params, as: :json
+      expect_not_notification
     end
   end
 
@@ -108,10 +100,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     it 'does not sends a slack notification to a given channel with the PR notification' do
-      expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
-        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
-
-      post api_v1_notifications_filter_path, params: params, as: :json
+      expect_not_notification
     end
   end
 
@@ -127,11 +116,8 @@ describe 'GET api/v1/notifications_filter', type: :request do
       }
     end
 
-    it 'does not sends a slack notification to a given channel with the PR notification' do
-      expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
-
-      post api_v1_notifications_filter_path, params: params, as: :json
+    it 'sends a slack notification to a given channel with the PR notification' do
+      expect_notification
     end
   end
   
@@ -149,10 +135,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     it 'sends a slack notification to a given channel with the PR notification and language emoji' do
-      expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-        .with(channel: channel, text: message, as_user: false, username: 'user', icon_url: 'image.png')
-
-      post api_v1_notifications_filter_path, params: params, as: :json
+      expect_notification
     end
   end
 
@@ -175,10 +158,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     it 'does NOT send a notification' do
-      expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
-        .with(channel: channel, text: pull_request_link)
-
-      post api_v1_notifications_filter_path, params: params, as: :json
+      expect_not_notification
     end
   end
 
@@ -199,4 +179,16 @@ describe 'GET api/v1/notifications_filter', type: :request do
       post api_v1_notifications_filter_path, params: params, as: :json
     end
   end
+end
+
+def expect_notification(text: message)
+  expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
+    .with(channel: channel, text: text, as_user: false, username: 'user', icon_url: 'image.png')
+
+  post api_v1_notifications_filter_path, params: params, as: :json
+end
+
+def expect_not_notification
+  expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
+  post api_v1_notifications_filter_path, params: params, as: :json
 end
