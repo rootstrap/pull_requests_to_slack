@@ -12,7 +12,10 @@ class SlackBot
     'React-Native' => ':react_native:',
     'Angular' => ':angular:',
     'Python' => ':python:',
-    'HTML' => ':html5:'
+    'HTML' => ':html5:',
+    'Elixir' => ':elixir:',
+    'R' => ':r-lang:',
+    'PHP' => ':php:'
   }.freeze
 
   attr_reader :client, :channel
