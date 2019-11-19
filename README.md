@@ -1,4 +1,4 @@
-# Rootstrap Github for Slack
+# Rootstrap Pull request to Slack
 
 ## Description
 Send Github pull request notifications to Slack.
@@ -10,7 +10,7 @@ Send Github pull request notifications to Slack.
 3. Create your `database.yml` and `application.yml` files. There are sample files in `/config`
 4. `bundle install`
 5. Generate a secret key with `rake secret` and paste this value into the `application.yml`.
-6. Fill the `SLACK_API_TOKEN` and `SLACK_BOT_TOKEN` in `application.yml`. 
+6. Fill the `SLACK_API_TOKEN` and `SLACK_BOT_TOKEN` in `application.yml`.
 To get the credentials: log in to https://api.slack.com/apps, select your application and then click OAuth Tokens & Redirect URLs. `SLACK_API_TOKEN` is the `OAuth Access Token` and `SLACK_BOT_TOKEN` is `Bot User OAuth Access Token`
 6. `rake db:create`
 7. `rake db:migrate`
@@ -20,7 +20,7 @@ To get the credentials: log in to https://api.slack.com/apps, select your applic
 11. `rails s`
 12. You are ready!
 
-## How to test the webhook locally? 
+## How to test the webhook locally?
 - Create a dummy repository in github with a couple branches.
 - Run server:  `rails s -p 3001`
 - In another terminal run ngrok: `ngrok http 3001`
@@ -35,7 +35,7 @@ Install heroku cli https://devcenter.heroku.com/articles/heroku-cli#download-and
 ```
 heroku login
 enter credentials
-heroku git:remote -a rootstrap-github-for-slack
+heroku git:remote -a rootstrap-pull-request-to-slack
 ```
 
 * Push:
@@ -58,7 +58,7 @@ Info about github hooks and Pull request payload
 https://developer.github.com/webhooks/configuring/
 https://developer.github.com/v3/activity/events/types/#pullrequestevent
 
-#### Slack methods 
+#### Slack methods
 https://api.slack.com/methods
 
 [<img src="https://s3-us-west-1.amazonaws.com/rootstrap.com/img/rs.png" width="100"/>](http://www.rootstrap.com)
