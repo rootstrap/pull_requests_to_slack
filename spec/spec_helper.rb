@@ -5,7 +5,6 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'factory_bot_rails'
 require 'helpers'
 require 'webmock/rspec'
-require 'shoulda/matchers'
 
 FactoryBot.factories.clear
 FactoryBot.reload
