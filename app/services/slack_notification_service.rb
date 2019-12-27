@@ -1,11 +1,9 @@
 class SlackNotificationService
-  ACTION_METHODS = {
-    'opened' => :filter_opened_action,
-    'ready_for_review' => :filter_ready_for_review_action,
-    'unlabeled' => :filter_unlabeled_action,
-    'labeled' => :filter_on_hold_labeled_action,
-    'closed' => :filter_closed_action,
-  }.freeze
+  ACTION_METHODS = { 'opened' => :filter_opened_action,
+                     'ready_for_review' => :filter_ready_for_review_action,
+                     'unlabeled' => :filter_unlabeled_action,
+                     'labeled' => :filter_on_hold_labeled_action,
+                     'closed' => :filter_closed_action }.freeze
 
   CHANNEL = '#code-review'.freeze
 
@@ -19,42 +17,43 @@ class SlackNotificationService
   end
 
   def send_notification
-    return if @pr.blacklisted?
+    return if pr.blacklisted?
+
     send(ACTION_METHODS[action]) if ACTION_METHODS.key? action
   end
 
   private
 
   def notify_pull_request
-    message = @slack_bot.message(@pr)
-    @slack_bot.notify(message, @pr.username, @pr.avatar_url)
+    message = slack_bot.message(pr)
+    slack_bot.notify(message, pr.username, pr.avatar_url)
   end
 
   def filter_unlabeled_action
-    notify_pull_request if @pr.on_hold_webhook?
+    notify_pull_request if pr.on_hold_webhook?
   end
 
   def filter_on_hold_labeled_action
-    return unless @pr.on_hold_webhook?
-    matches = @slack_bot.find_message @pr.url
-    @slack_bot.delete_message matches
+    return unless pr.on_hold_webhook?
+
+    matches = slack_bot.find_message pr.url
+    slack_bot.delete_message matches
   end
 
   def filter_opened_action
-    notify_pull_request unless @pr.on_hold? || @pr.is_draft?
+    notify_pull_request unless pr.on_hold? || pr.draft?
   end
 
   def filter_ready_for_review_action
-    notify_pull_request unless @pr.on_hold?
+    notify_pull_request unless pr.on_hold?
   end
 
   def filter_closed_action
-    filter_merged_action if @pr.is_merged?
+    filter_merged_action if pr.merged?
   end
 
   def filter_merged_action
-    matches = @slack_bot.find_message @pr.url
-    @slack_bot.add_merge_emoji matches
+    matches = slack_bot.find_message pr.url
+    slack_bot.add_merge_emoji matches
   end
-
 end

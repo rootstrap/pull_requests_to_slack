@@ -1,6 +1,6 @@
 class PullRequest
   ON_HOLD = 'ON HOLD'.freeze
-  attr_reader :info, :username, :avatar_url, :webhook_label, 
+  attr_reader :info, :username, :avatar_url, :webhook_label,
               :url, :body, :language, :repo_name
 
   def initialize(params)
@@ -22,11 +22,11 @@ class PullRequest
     @info[:labels]&.any? { |label| on_hold_label? label[:name] } || false
   end
 
-  def is_draft?
+  def draft?
     @info[:draft] == true
   end
 
-  def is_merged?
+  def merged?
     @info[:merged] == true
   end
 
@@ -37,5 +37,4 @@ class PullRequest
   def blacklisted?
     User.where(github_name: username, blacklisted: true).exists?
   end
-
 end

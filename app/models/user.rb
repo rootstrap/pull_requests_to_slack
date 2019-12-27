@@ -20,6 +20,7 @@
 class User < ApplicationRecord
   def full_name
     return github_name unless first_name.present?
+
     "#{first_name} #{last_name}"
   end
 end
