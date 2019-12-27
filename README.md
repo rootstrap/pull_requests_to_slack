@@ -12,9 +12,9 @@ Send Github pull request notifications to Slack.
 5. Generate a secret key with `rake secret` and paste this value into the `application.yml`.
 6. Fill the `SLACK_API_TOKEN` and `SLACK_BOT_TOKEN` in `application.yml`.
 To get the credentials: log in to https://api.slack.com/apps, select your application and then click OAuth Tokens & Redirect URLs. `SLACK_API_TOKEN` is the `OAuth Access Token` and `SLACK_BOT_TOKEN` is `Bot User OAuth Access Token`
-6. `rake db:create`
-7. `rake db:migrate`
-8. `rake db:seed`  # this will create an admin with admin@example.com:password
+6. `rails db:create`
+7. `rails db:migrate`
+8. `rails db:seed`  # this will create an admin with admin@example.com:password
 9. `npm install -g ngrok` Install Ngrok
 10. `rspec` and make sure all tests pass
 11. `rails s`
