@@ -10,7 +10,7 @@ gem 'devise_token_auth', '~> 1.1.3'
 gem 'pg', '~> 0.18.2'
 gem 'pry-rails', '~> 0.3.6'
 gem 'puma', '~> 3.12.2'
-gem 'rack-cors', '~> 1.0.5'
+gem 'rack-cors', '~> 1.1.0'
 gem 'slack-ruby-client', '~> 0.11.1'
 gem 'sprockets', '~> 3.7.2'
 
