@@ -1,6 +1,6 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require File.expand_path('../config/environment', __dir__)
 
 require 'factory_bot_rails'
 require 'helpers'
@@ -9,7 +9,7 @@ require 'webmock/rspec'
 FactoryBot.factories.clear
 FactoryBot.reload
 
-Dir[Rails.root.join('spec/support/**/*.rb')].each { |file| require file }
+Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |file| require file }
 
 RSpec.configure do |config|
   config.include Helpers

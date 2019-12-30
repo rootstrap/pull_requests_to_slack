@@ -1,6 +1,14 @@
 Documentation:
   Enabled: false
 
+Layout/ArgumentAlignment:
+  Exclude:
+    - config/initializers/rack_cors.rb
+
+Layout/HashAlignment:
+  Exclude:
+    - lib/tasks/auto_annotate_models.rake
+
 Layout/SpaceBeforeFirstArg:
   Exclude:
     - app/views/api/**/**/*

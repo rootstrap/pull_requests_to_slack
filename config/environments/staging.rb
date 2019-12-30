@@ -1,1 +1,1 @@
-require File.expand_path('../production', __FILE__)
+require File.expand_path('production', __dir__)

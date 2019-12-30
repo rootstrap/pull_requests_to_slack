@@ -1,0 +1,25 @@
+language: ruby
+
+cache: bundler
+
+before_install: gem install bundler -v 1.17
+
+rvm:
+  - 2.6.3
+
+sudo: false
+
+before_script:
+  - cp config/database.travis.yml config/database.yml
+  - RAILS_ENV=test bundle exec rake db:create
+  - RAILS_ENV=test bundle exec rake db:schema:load
+
+services:
+  - postgresql
+
+addons:
+  postgresql: "9.4"
+
+script:
+  - bundle exec rake code_analysis
+  - bundle exec rspec

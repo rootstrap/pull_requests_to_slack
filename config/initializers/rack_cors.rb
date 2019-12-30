@@ -4,9 +4,9 @@ module App
       allow do
         origins '*'
         resource '*',
-                 headers: :any,
-                 methods: %i[get post options put delete],
-                 expose:  ['access-token', 'uid', 'client']
+          headers: :any,
+          methods: %i[get post options put delete],
+          expose: %w[access-token uid client]
       end
     end
   end

@@ -1,0 +1,4 @@
+test:
+  adapter: postgresql
+  database: pull_request_slack_test
+  username: postgres
