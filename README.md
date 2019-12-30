@@ -1,6 +1,6 @@
 # Rootstrap Pull request to Slack
 
-[![CircleCI](https://circleci.com/gh/rootstrap/pull_requests_to_slack?style=svg)](https://circleci.com/gh/rootstrap/pull_requests_to_slack)
+[![CircleCI](https://circleci.com/gh/rootstrap/pull_requests_to_slack.svg?style=svg)](https://circleci.com/gh/rootstrap/pull_requests_to_slack)
 [![Maintainability](https://api.codeclimate.com/v1/badges/b3ba3fcae655ad6f4a21/maintainability)](https://codeclimate.com/github/rootstrap/github_for_slack/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/b3ba3fcae655ad6f4a21/test_coverage)](https://codeclimate.com/github/rootstrap/github_for_slack/test_coverage)
 
