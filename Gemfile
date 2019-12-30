@@ -6,7 +6,6 @@ gem 'rails', '~> 5.1.2'
 
 gem 'activeadmin', '~> 2.4'
 gem 'devise', '~> 4.7.1'
-gem 'devise_token_auth', '~> 1.1.3'
 gem 'pg', '~> 0.18.2'
 gem 'pry-rails', '~> 0.3.6'
 gem 'puma', '~> 3.12.2'

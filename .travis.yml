@@ -9,17 +9,27 @@ rvm:
 
 sudo: false
 
-before_script:
-  - cp config/database.travis.yml config/database.yml
-  - RAILS_ENV=test bundle exec rake db:create
-  - RAILS_ENV=test bundle exec rake db:schema:load
-
 services:
   - postgresql
 
 addons:
   postgresql: "9.4"
 
+env:
+  global:
+    - CC_TEST_REPORTER_ID=54db504b0c710f8ec07866e91808973e20566c7018b7b0d13ad2e40227c23c79
+
+before_script:
+  - cp config/database.travis.yml config/database.yml
+  - RAILS_ENV=test bundle exec rake db:create
+  - RAILS_ENV=test bundle exec rake db:schema:load
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
 script:
   - bundle exec rake code_analysis
   - bundle exec rspec
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

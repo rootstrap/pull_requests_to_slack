@@ -1,8 +1,8 @@
 # Rootstrap Pull request to Slack
 
-[![CircleCI](https://circleci.com/gh/rootstrap/pull_requests_to_slack.svg?style=svg)](https://circleci.com/gh/rootstrap/pull_requests_to_slack)
-[![Maintainability](https://api.codeclimate.com/v1/badges/b3ba3fcae655ad6f4a21/maintainability)](https://codeclimate.com/github/rootstrap/github_for_slack/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/b3ba3fcae655ad6f4a21/test_coverage)](https://codeclimate.com/github/rootstrap/github_for_slack/test_coverage)
+[![Build Status](https://travis-ci.org/rootstrap/pull_requests_to_slack.svg?branch=master)](https://travis-ci.org/rootstrap/pull_requests_to_slack)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9e5ed337285c4b6f7882/maintainability)](https://codeclimate.com/github/rootstrap/pull_requests_to_slack/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/9e5ed337285c4b6f7882/test_coverage)](https://codeclimate.com/github/rootstrap/pull_requests_to_slack/test_coverage)
 
 Send Github pull request notifications to Slack. 
 
