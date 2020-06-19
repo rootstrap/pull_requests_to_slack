@@ -88,6 +88,6 @@ class SlackBot
     elsif repo_name.include? 'angular'
       language = 'Angular'
     end
-    EMOJI_HASH.fetch language, "[#{language}]"
+    EMOJI_HASH.fetch language, ":#{language.downcase}:"
   end
 end
