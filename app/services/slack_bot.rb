@@ -10,6 +10,7 @@ class SlackBot
                   'React' => ':react:',
                   'React-Native' => ':react_native:',
                   'Angular' => ':angular:',
+                  'Vue' => ':vue:',
                   'Python' => ':python:',
                   'HTML' => ':html5:',
                   'Elixir' => ':elixir:',
