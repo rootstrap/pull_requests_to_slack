@@ -23,7 +23,7 @@ end
 
 group :development do
   gem 'annotate', '~> 3.0.3'
-  gem 'better_errors', '~> 2.5.1'
+  gem 'better_errors', '~> 2.8.0'
   gem 'brakeman', '~> 4.7.1'
   gem 'letter_opener', '~> 1.7'
   gem 'listen', '~> 3.2'
