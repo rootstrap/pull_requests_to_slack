@@ -11,6 +11,7 @@ gem 'puma', '~> 5.5'
 gem 'rack-cors', '~> 1.0', '>= 1.0.6'
 gem 'slack-ruby-client', '~> 1.0.0'
 gem 'sprockets', '~> 3.7.2'
+gem 'sass-rails', '~> 5.1'
 
 group :development, :test do
   gem 'bullet', '~> 6.1'
