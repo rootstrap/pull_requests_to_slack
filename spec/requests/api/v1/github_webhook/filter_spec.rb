@@ -183,7 +183,7 @@ end
 
 def expect_notification(text: message)
   expect_any_instance_of(Slack::Web::Client).to receive(:chat_postMessage)
-    .with(channel: channel, text: text, as_user: false, username: 'user', icon_url: 'image.png')
+    .with(channel: channel, text: text, username: 'user', icon_url: 'image.png')
 
   post api_v1_notifications_filter_path, params: params, as: :json
 end
