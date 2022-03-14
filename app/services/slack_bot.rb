@@ -25,7 +25,7 @@ class SlackBot
   end
 
   def notify(message, username, avatar_url)
-    client.chat_postMessage(channel: @channel, text: message, as_user: false,
+    client.chat_postMessage(channel: @channel, text: message,
                             username: username, icon_url: avatar_url)
   end
 
@@ -70,7 +70,7 @@ class SlackBot
   end
 
   def extract_slack_body(body)
-    body = body.gsub("\r\n", ' ').split('\slack ')[1] || ''
+    body = body&.gsub("\r\n", ' ')&.split('\slack ')&[1] || ''
     format_body body
   end
 
@@ -88,6 +88,6 @@ class SlackBot
     elsif repo_name.include? 'angular'
       language = 'Angular'
     end
-    EMOJI_HASH.fetch language, ":#{language.downcase}:"
+    EMOJI_HASH.fetch language, ":#{language&.downcase}:"
   end
 end
