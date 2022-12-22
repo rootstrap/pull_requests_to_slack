@@ -5,14 +5,49 @@ class SlackNotificationService
                      'labeled' => :filter_on_hold_labeled_action,
                      'closed' => :filter_closed_action }.freeze
 
-  CHANNEL = '#code-review'.freeze
+  LANGUAGES = {
+    'Angular': 'angular',
+    'C': 'c',
+    'C#': 'csharp',
+    'C++': 'cplusplus',
+    'CoffeeScript': 'coffescript',
+    'CSS': 'css',
+    'Dart': 'dart',
+    'Dockerfile': 'dockerfile',
+    'EJS': 'ejs',
+    'Elixir': 'elixir',
+    'Gherkin': 'gherkin',
+    'Go': 'go',
+    'HCL': 'hcl',
+    'HTML': 'html',
+    'Java': 'java',
+    'JavaScript': 'javascript',
+    'Jinja': 'jinja',
+    'Jupyter Notebook': 'jupyter-notebook',
+    'Kotlin': 'kotlin',
+    'Makefile': 'makefile',
+    'Objective-C': 'objectivec',
+    'PHP': 'php',
+    'Python': 'python',
+    'R': 'r',
+    'React': 'react',
+    'React-Native': 'react-native',
+    'Ruby': 'ruby',
+    'Rust': 'rust',
+    'SCSS': 'scss',
+    'Shell': 'shell',
+    'Solidity': 'solidity',
+    'Swift': 'swift',
+    'TypeScript': 'typescript',
+    'Vue': 'vue'
+  }.freeze
 
   attr_reader :action, :extra_params, :slack_bot, :pr
 
   def initialize(params)
     @action = params[:github_webhook][:action]
     @extra_params = params
-    @slack_bot = SlackBot.new(channel: CHANNEL)
+    @slack_bot = SlackBot.new(channel: channel(params))
     @pr = PullRequest.new(params)
   end
 
@@ -25,7 +60,6 @@ class SlackNotificationService
   private
 
   def notify_pull_request
-    # Can decide what channel use depending on the repo
     message = slack_bot.message(pr)
     slack_bot.notify(message, pr.username, pr.avatar_url)
   end
@@ -39,6 +73,16 @@ class SlackNotificationService
 
     matches = slack_bot.find_message pr.url
     slack_bot.delete_message matches
+  end
+
+  def channel(params)
+    lang = LANGUAGES[params[:repository][:language]&.to_sym]
+
+    if lang
+      "##{lang}-reviewers"
+    else
+      '#code-review'
+    end
   end
 
   def filter_opened_action

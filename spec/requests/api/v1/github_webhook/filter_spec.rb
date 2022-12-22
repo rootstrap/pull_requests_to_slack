@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'GET api/v1/notifications_filter', type: :request do
-  let(:channel) { '#code-review' }
+  let(:channel) { '#javascript-reviewers' }
   let(:pull_request_link) { 'https://github.com/rootstrap/example-project/pull/1' }
   let(:message) { "#{pull_request_link} <@user> Tiny PR :javascript:" }
   let(:pull_request) do
@@ -37,6 +37,15 @@ describe 'GET api/v1/notifications_filter', type: :request do
       it 'sends a slack notification with the PR link and language emoji' do
         params[:repository][:name] = 'example-React-Native'
         expect_notification(text: "#{pull_request_link} <@user> Tiny PR :react_native:")
+      end
+    end
+
+    context 'when repo does not send a valid language' do
+      let(:channel) { '#code-reviewers' }
+
+      it 'sends a slack notification with the PR link to #code-reviewers channel' do
+        params[:repository][:language] = 'no-valid-language'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :no-valid-language:")
       end
     end
 
