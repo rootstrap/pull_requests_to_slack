@@ -25,6 +25,7 @@ class SlackNotificationService
   private
 
   def notify_pull_request
+    # Can decide what channel use depending on the repo
     message = slack_bot.message(pr)
     slack_bot.notify(message, pr.username, pr.avatar_url)
   end
