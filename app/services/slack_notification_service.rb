@@ -18,6 +18,7 @@ class SlackNotificationService
     'Dockerfile': 'dockerfile',
     'EJS': 'ejs',
     'Elixir': 'elixir',
+    'Flutter': 'flutter',
     'Gherkin': 'gherkin',
     'Go': 'go',
     'HCL': 'hcl',
@@ -79,8 +80,11 @@ class SlackNotificationService
 
   def channel(params)
     lang = LANGUAGES[params.dig("repository", "language")&.to_sym]
+    repository_info = params.dig("repository")
 
     if lang
+      return js_channels(repository_info) if lang == 'javascript'
+
       "##{lang}-reviewers"
     else
       DEFAULT_CHANNEL
@@ -102,5 +106,20 @@ class SlackNotificationService
   def filter_merged_action
     matches = slack_bot.find_message pr.url
     slack_bot.add_merge_emoji matches
+  end
+
+  def js_channels(pr)
+    repo_name = pr['name'].downcase
+    language = 'javascript'
+
+    if (repo_name.include? 'react') && (repo_name.include? 'native')
+      language = LANGUAGES[:'React-Native']
+    elsif repo_name.include? 'react'
+      language = LANGUAGES[:React]
+    elsif repo_name.include? 'angular'
+      language = LANGUAGES[:Angular]
+    end
+
+    return "##{language}-reviewers"
   end
 end
