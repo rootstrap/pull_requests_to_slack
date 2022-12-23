@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe 'GET api/v1/notifications_filter', type: :request do
   let(:channel) { '#javascript-reviewers' }
+  let(:default_channel) { '#code-review' }
   let(:pull_request_link) { 'https://github.com/rootstrap/example-project/pull/1' }
   let(:message) { "#{pull_request_link} <@user> Tiny PR :javascript:" }
   let(:pull_request) do
@@ -41,7 +42,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     context 'when repo does not send a valid language' do
-      let(:channel) { '#code-reviewers' }
+      let(:channel) { '#code-review' }
 
       it 'sends a slack notification with the PR link to #code-reviewers channel' do
         params[:repository][:language] = 'no-valid-language'
@@ -90,7 +91,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
       expect_any_instance_of(Slack::Web::Client).to receive(:search_messages)
         .and_return(messages: { matches: [{ ts: '1234' }] })
       expect_any_instance_of(Slack::Web::Client).to receive(:reactions_add)
-        .with(name: :merged, channel: channel, timestamp: '1234', as_user: false)
+        .with(name: :merged, channel: default_channel, timestamp: '1234', as_user: false)
 
       post api_v1_notifications_filter_path, params: params, as: :json
     end
@@ -184,7 +185,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
       expect_any_instance_of(Slack::Web::Client).to receive(:search_messages)
         .and_return(messages: { matches: [{ ts: '1234' }] })
       expect_any_instance_of(Slack::Web::Client).to receive(:chat_delete)
-        .with(channel: channel, ts: '1234')
+        .with(channel: default_channel, ts: '1234')
       post api_v1_notifications_filter_path, params: params, as: :json
     end
   end

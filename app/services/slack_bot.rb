@@ -70,7 +70,8 @@ class SlackBot
   end
 
   def extract_slack_body(body)
-    body = body&.gsub("\r\n", ' ')&.split('\slack ')&[1] || ''
+    body_gsub = body&.gsub("\r\n", ' ')&.split('\slack ')
+    body = body_gsub[1].present? ? body_gsub[1] : ''
     format_body body
   end
 
@@ -88,6 +89,7 @@ class SlackBot
     elsif repo_name.include? 'angular'
       language = 'Angular'
     end
+
     EMOJI_HASH.fetch language, ":#{language&.downcase}:"
   end
 end

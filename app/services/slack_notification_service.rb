@@ -5,6 +5,8 @@ class SlackNotificationService
                      'labeled' => :filter_on_hold_labeled_action,
                      'closed' => :filter_closed_action }.freeze
 
+  DEFAULT_CHANNEL = '#code-review'.freeze
+
   LANGUAGES = {
     'Angular': 'angular',
     'C': 'c',
@@ -76,12 +78,12 @@ class SlackNotificationService
   end
 
   def channel(params)
-    lang = LANGUAGES[params[:repository][:language]&.to_sym]
+    lang = LANGUAGES[params.dig("repository", "language")&.to_sym]
 
     if lang
       "##{lang}-reviewers"
     else
-      '#code-review'
+      DEFAULT_CHANNEL
     end
   end
 
