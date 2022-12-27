@@ -35,7 +35,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     context 'when repository is has angular code' do
-      let(:channel) { '#angular-reviewers' }
+      let(:channel) { '#javascript-reviewers' }
 
       it 'sends message to correct channel' do
         params[:repository][:name] = 'example-Angular-repository'
@@ -43,12 +43,23 @@ describe 'GET api/v1/notifications_filter', type: :request do
       end
     end
 
-    context 'repo name includes a language' do
-      let(:channel) { '#react-native-reviewers' }
+    context 'repo name includes a technology' do
+      context 'technology is react native' do
+        let(:channel) { '#react-reviewers' }
 
-      it 'sends a slack notification with the PR link and language emoji' do
-        params[:repository][:name] = 'example-React-Native'
-        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :react_native:")
+        it 'sends a slack notification with the PR link and language emoji' do
+          params[:repository][:name] = 'example-React-Native'
+          expect_notification(text: "#{pull_request_link} <@user> Tiny PR :react_native:")
+        end
+      end
+
+      context 'technology is node' do
+        let(:channel) { '#node-reviewers' }
+
+        it 'sends a slack notification with the PR link and language emoji' do
+          params[:repository][:name] = 'example-Node-repo'
+          expect_notification(text: "#{pull_request_link} <@user> Tiny PR :nodejs:")
+        end
       end
     end
 

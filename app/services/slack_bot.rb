@@ -89,6 +89,8 @@ class SlackBot
       language = 'React'
     elsif repo_name.include? 'angular'
       language = 'Angular'
+    elsif repo_name.include? 'node'
+      language = 'Node'
     end
 
     EMOJI_HASH.fetch language, ":#{language&.downcase}:"

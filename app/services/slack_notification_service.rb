@@ -84,7 +84,7 @@ class SlackNotificationService
     repository_info = params.dig("repository")
 
     if lang
-      return js_channels(repository_info) if lang == 'javascript'
+      return js_channels(repository_info, lang) if lang == 'javascript' || lang == 'typescript'
 
       "##{lang}-reviewers"
     else
@@ -109,20 +109,16 @@ class SlackNotificationService
     slack_bot.add_merge_emoji matches
   end
 
-  def js_channels(pr)
+  def js_channels(pr, lang)
     repo_name = pr['name'].downcase
-    language = 'javascript'
+    technology = lang
 
-    if (repo_name.include? 'react') && (repo_name.include? 'native')
-      language = LANGUAGES[:'React-Native']
-    elsif repo_name.include? 'react'
-      language = LANGUAGES[:React]
-    elsif repo_name.include? 'angular'
-      language = LANGUAGES[:Angular]
+    if repo_name.include? 'react'
+      technology = LANGUAGES[:React]
     elsif repo_name.include? 'node'
-      language = LANGUAGES[:Node]
+      technology = LANGUAGES[:Node]
     end
 
-    return "##{language}-reviewers"
+    return "##{technology}-reviewers"
   end
 end
