@@ -29,6 +29,7 @@ class SlackNotificationService
     'Jupyter Notebook': 'jupyter-notebook',
     'Kotlin': 'kotlin',
     'Makefile': 'makefile',
+    'Node': 'node',
     'Objective-C': 'objectivec',
     'PHP': 'php',
     'Python': 'python',
@@ -118,6 +119,8 @@ class SlackNotificationService
       language = LANGUAGES[:React]
     elsif repo_name.include? 'angular'
       language = LANGUAGES[:Angular]
+    elsif repo_name.include? 'node'
+      language = LANGUAGES[:Node]
     end
 
     return "##{language}-reviewers"
