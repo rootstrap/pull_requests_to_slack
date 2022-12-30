@@ -8,43 +8,17 @@ class SlackNotificationService
   DEFAULT_CHANNEL = '#code-review'.freeze
 
   LANGUAGES = {
-    'Angular': 'angular',
-    'C': 'c',
-    'C#': 'csharp',
-    'C++': 'cplusplus',
-    'CoffeeScript': 'coffescript',
-    'CSS': 'css',
-    'Dart': 'dart',
-    'Dockerfile': 'dockerfile',
-    'EJS': 'ejs',
-    'Elixir': 'elixir',
-    'Flutter': 'flutter',
-    'Gherkin': 'gherkin',
-    'Go': 'go',
-    'HCL': 'hcl',
-    'HTML': 'html',
-    'Java': 'java',
-    'JavaScript': 'javascript',
-    'Jinja': 'jinja',
-    'Jupyter Notebook': 'jupyter-notebook',
-    'Kotlin': 'kotlin',
-    'Makefile': 'makefile',
+    'Ruby': 'ruby',
     'Node': 'node',
-    'Objective-C': 'objectivec',
-    'PHP': 'php',
     'Python': 'python',
-    'R': 'r',
     'React': 'react',
     'React-Native': 'react-native',
-    'Ruby': 'ruby',
-    'Rust': 'rust',
-    'SCSS': 'scss',
-    'Shell': 'shell',
-    'Solidity': 'solidity',
-    'Swift': 'swift',
+    'Flutter': 'flutter',
+    'Kotlin': 'kotlin',
+    'Swift': 'swift',                
     'TypeScript': 'typescript',
-    'Vue': 'vue'
-  }.freeze
+    'JavaScript': 'javascript'    
+  }
 
   attr_reader :action, :extra_params, :slack_bot, :pr
 
@@ -82,14 +56,23 @@ class SlackNotificationService
   def channel(params)
     lang = LANGUAGES[params.dig("repository", "language")&.to_sym]
     repository_info = params.dig("repository")
+    channel = search_channel(lang, repository_info) if lang
 
-    if lang
-      return js_channels(repository_info, lang) if lang == 'javascript' || lang == 'typescript'
-
-      "##{lang}-reviewers"
+    if available_channels.include? channel
+      "##{channel}"
     else
       DEFAULT_CHANNEL
     end
+  end
+
+  def available_channels
+    Slack::Web::Client.new.conversations_list.channels.pluck(:name)
+  end
+
+  def search_channel(lang, repository_info)
+    return js_channels(repository_info, lang) if lang == 'javascript' || lang == 'typescript'
+
+    "#{lang}-code-review"
   end
 
   def filter_opened_action
@@ -119,6 +102,6 @@ class SlackNotificationService
       technology = LANGUAGES[:Node]
     end
 
-    return "##{technology}-reviewers"
+    return "#{technology}-code-review"
   end
 end

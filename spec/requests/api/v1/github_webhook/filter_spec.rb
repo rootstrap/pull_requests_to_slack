@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'GET api/v1/notifications_filter', type: :request do
-  let(:channel) { '#javascript-reviewers' }
+  let(:channel) { '#javascript-code-review' }
   let(:default_channel) { '#code-review' }
   let(:pull_request_link) { 'https://github.com/rootstrap/example-project/pull/1' }
   let(:message) { "#{pull_request_link} <@user> Tiny PR :javascript:" }
@@ -16,6 +16,16 @@ describe 'GET api/v1/notifications_filter', type: :request do
         avatar_url: 'image.png'
       }
     }
+  end
+
+  let!(:available_channels) do
+    ['javascript-code-review', 'react-code-review', 'react-native-code-review',
+      'code-review', 'typescript-code-review', 'node-code-review']
+  end
+
+  before do
+    allow_any_instance_of(SlackNotificationService).to receive(:available_channels)
+    .and_return(available_channels)
   end
 
   context 'when there is an open pull request notification' do
@@ -35,7 +45,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
     end
 
     context 'when repository is has angular code' do
-      let(:channel) { '#javascript-reviewers' }
+      let(:channel) { '#javascript-code-review' }
 
       it 'sends message to correct channel' do
         params[:repository][:name] = 'example-Angular-repository'
@@ -45,7 +55,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
 
     context 'repo name includes a technology' do
       context 'technology is react native' do
-        let(:channel) { '#react-reviewers' }
+        let(:channel) { '#react-code-review' }
 
         it 'sends a slack notification with the PR link and language emoji' do
           params[:repository][:name] = 'example-React-Native'
@@ -54,7 +64,7 @@ describe 'GET api/v1/notifications_filter', type: :request do
       end
 
       context 'technology is node' do
-        let(:channel) { '#node-reviewers' }
+        let(:channel) { '#node-code-review' }
 
         it 'sends a slack notification with the PR link and language emoji' do
           params[:repository][:name] = 'example-Node-repo'
@@ -63,12 +73,21 @@ describe 'GET api/v1/notifications_filter', type: :request do
       end
     end
 
-    context 'when repo does not send a valid language' do
+    context 'with a language no supported' do
       let(:channel) { '#code-review' }
 
       it 'sends a slack notification with the PR link to #code-reviewers channel' do
-        params[:repository][:language] = 'no-valid-language'
-        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :no-valid-language:")
+        params[:repository][:language] = 'gherkin'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :gherkin:")
+      end
+    end
+
+    context 'with a language with no channel created' do
+      let(:channel) { '#code-review' }
+
+      it 'sends a slack notification with the PR link to #code-reviewers channel' do
+        params[:repository][:language] = 'Flutter'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :flutter:")
       end
     end
 
