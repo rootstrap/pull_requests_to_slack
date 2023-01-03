@@ -15,10 +15,10 @@ class SlackNotificationService
     'React-Native': 'react-native',
     'Flutter': 'flutter',
     'Kotlin': 'kotlin',
-    'Swift': 'swift',                
+    'Swift': 'swift',
     'TypeScript': 'typescript',
-    'JavaScript': 'javascript'    
-  }
+    'JavaScript': 'javascript'
+  }.freeze
 
   attr_reader :action, :extra_params, :slack_bot, :pr
 
@@ -54,23 +54,25 @@ class SlackNotificationService
   end
 
   def channel(params)
-    lang = LANGUAGES[params.dig("repository", "language")&.to_sym]
-    repository_info = params.dig("repository")
-    channel = search_channel(lang, repository_info) if lang
+    lang = LANGUAGES[params.dig('repository', 'language')&.to_sym]
+    repository_info = params.dig('repository')
+    channel = build_channel(lang, repository_info) if lang
 
-    if available_channels.include? channel
+    if search_channel(channel)
       "##{channel}"
     else
       DEFAULT_CHANNEL
     end
   end
 
-  def available_channels
-    Slack::Web::Client.new.conversations_list.channels.pluck(:name)
+  def search_channel(channel)
+    Slack::Web::Client.new.conversations_info(channel: channel)
+  rescue Slack::Web::Api::Errors::SlackError
+    nil
   end
 
-  def search_channel(lang, repository_info)
-    return js_channels(repository_info, lang) if lang == 'javascript' || lang == 'typescript'
+  def build_channel(lang, repository_info)
+    return js_channels(repository_info, lang) if %w[javascript typescript].include?(lang)
 
     "#{lang}-code-review"
   end
@@ -102,6 +104,6 @@ class SlackNotificationService
       technology = LANGUAGES[:Node]
     end
 
-    return "#{technology}-code-review"
+    "#{technology}-code-review"
   end
 end

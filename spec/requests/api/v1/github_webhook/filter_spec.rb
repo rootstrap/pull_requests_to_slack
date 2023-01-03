@@ -18,15 +18,11 @@ describe 'GET api/v1/notifications_filter', type: :request do
     }
   end
 
-  let!(:available_channels) do
-    ['javascript-code-review', 'react-code-review', 'react-native-code-review',
-      'code-review', 'typescript-code-review', 'node-code-review']
+  let(:recovered_channel) do
+    Slack::Messages::Message.new(channel: channel)
   end
 
-  before do
-    allow_any_instance_of(SlackNotificationService).to receive(:available_channels)
-    .and_return(available_channels)
-  end
+  before { mock_channel_response(channel) }
 
   context 'when there is an open pull request notification' do
     let(:params) do
@@ -73,8 +69,10 @@ describe 'GET api/v1/notifications_filter', type: :request do
       end
     end
 
-    context 'with a language no supported' do
+    context 'with a language not supported' do
       let(:channel) { '#code-review' }
+
+      before { mock_channel_response(nil) }
 
       it 'sends a slack notification with the PR link to #code-reviewers channel' do
         params[:repository][:language] = 'gherkin'
@@ -84,6 +82,8 @@ describe 'GET api/v1/notifications_filter', type: :request do
 
     context 'with a language with no channel created' do
       let(:channel) { '#code-review' }
+
+      before { mock_channel_response(nil) }
 
       it 'sends a slack notification with the PR link to #code-reviewers channel' do
         params[:repository][:language] = 'Flutter'
@@ -127,6 +127,8 @@ describe 'GET api/v1/notifications_filter', type: :request do
         pull_request: pull_request.merge('merged' => true)
       }
     end
+
+    before { mock_channel_response(nil) }
 
     it ' adds the merged reaction' do
       expect_any_instance_of(Slack::Web::Client).to receive(:search_messages)
@@ -222,6 +224,8 @@ describe 'GET api/v1/notifications_filter', type: :request do
       }
     end
 
+    before { mock_channel_response(nil) }
+
     it 'deletes the messages that contains the PR link' do
       expect_any_instance_of(Slack::Web::Client).to receive(:search_messages)
         .and_return(messages: { matches: [{ ts: '1234' }] })
@@ -243,3 +247,9 @@ def expect_not_notification
   expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
   post api_v1_notifications_filter_path, params: params, as: :json
 end
+
+def mock_channel_response(return_value)
+  allow_any_instance_of(SlackNotificationService).to receive(:search_channel)
+  .and_return(return_value)
+end
+
