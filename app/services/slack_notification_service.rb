@@ -5,14 +5,27 @@ class SlackNotificationService
                      'labeled' => :filter_on_hold_labeled_action,
                      'closed' => :filter_closed_action }.freeze
 
-  CHANNEL = '#code-review'.freeze
+  DEFAULT_CHANNEL = '#code-review'.freeze
+
+  LANGUAGES = {
+    'Ruby': 'ruby',
+    'Node': 'node',
+    'Python': 'python',
+    'React': 'react',
+    'React-Native': 'react-native',
+    'Flutter': 'flutter',
+    'Kotlin': 'kotlin',
+    'Swift': 'swift',
+    'TypeScript': 'typescript',
+    'JavaScript': 'javascript'
+  }.freeze
 
   attr_reader :action, :extra_params, :slack_bot, :pr
 
   def initialize(params)
     @action = params[:github_webhook][:action]
     @extra_params = params
-    @slack_bot = SlackBot.new(channel: CHANNEL)
+    @slack_bot = SlackBot.new(channel: channel(params))
     @pr = PullRequest.new(params)
   end
 
@@ -40,6 +53,30 @@ class SlackNotificationService
     slack_bot.delete_message matches
   end
 
+  def channel(params)
+    lang = LANGUAGES[params.dig('repository', 'language')&.to_sym]
+    repository_info = params.dig('repository')
+    channel = "##{build_channel(lang, repository_info)}" if lang
+
+    if search_channel(channel)
+      channel
+    else
+      DEFAULT_CHANNEL
+    end
+  end
+
+  def search_channel(channel)
+    Slack::Web::Client.new.conversations_info(channel: channel)
+  rescue Slack::Web::Api::Errors::SlackError
+    nil
+  end
+
+  def build_channel(lang, repository_info)
+    return js_channels(repository_info, lang) if %w[javascript typescript].include?(lang)
+
+    "#{lang}-code-review"
+  end
+
   def filter_opened_action
     notify_pull_request unless pr.on_hold? || pr.draft?
   end
@@ -55,5 +92,17 @@ class SlackNotificationService
   def filter_merged_action
     matches = slack_bot.find_message pr.url
     slack_bot.add_merge_emoji matches
+  end
+
+  def js_channels(pr, lang)
+    repo_name = pr['name'].downcase
+
+    if (repo_name.include? 'react') && (repo_name.include? 'native')
+      "#{LANGUAGES[:'React-Native']}-code-review"
+    elsif repo_name.include? 'react'
+      "#{LANGUAGES[:React]}-code-review"
+    elsif repo_name.include? 'node'
+      "#{LANGUAGES[:Node]}-code-review"
+    end
   end
 end

@@ -17,6 +17,12 @@ describe 'GET api/v1/notifications_filter', type: :request do
     }
   end
 
+  let(:recovered_channel) do
+    Slack::Messages::Message.new(channel: channel)
+  end
+
+  before { mock_channel_response(nil) }
+
   context 'when there is an open pull request notification' do
     let(:params) do
       {
@@ -33,10 +39,50 @@ describe 'GET api/v1/notifications_filter', type: :request do
       expect_notification
     end
 
-    context 'repo name includes a language' do
-      it 'sends a slack notification with the PR link and language emoji' do
-        params[:repository][:name] = 'example-React-Native'
-        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :react_native:")
+    context 'when repository includes angular code' do
+      it 'sends message to correct channel' do
+        params[:repository][:name] = 'example-Angular-repository'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :angular:")
+      end
+    end
+
+    context 'repository name includes a technology' do
+      before { mock_channel_response(channel) }
+
+      context 'technology is react native' do
+        let(:channel) { '#react-native-code-review' }
+
+        it 'sends a slack notification with the PR link and language emoji' do
+          params[:repository][:name] = 'example-React-Native'
+          expect_notification(text: "#{pull_request_link} <@user> Tiny PR :react_native:")
+        end
+      end
+
+      context 'technology is node' do
+        let(:channel) { '#node-code-review' }
+
+        it 'sends a slack notification with the PR link and language emoji' do
+          params[:repository][:name] = 'example-Node-repo'
+          expect_notification(text: "#{pull_request_link} <@user> Tiny PR :nodejs:")
+        end
+      end
+    end
+
+    context 'with a language not supported' do
+      let(:channel) { '#code-review' }
+
+      it 'sends a slack notification with the PR link to #code-reviewers channel' do
+        params[:repository][:language] = 'gherkin'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :gherkin:")
+      end
+    end
+
+    context 'with a language with no channel created' do
+      let(:channel) { '#code-review' }
+
+      it 'sends a slack notification with the PR link to #code-reviewers channel' do
+        params[:repository][:language] = 'Flutter'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :flutter:")
       end
     end
 
@@ -192,3 +238,9 @@ def expect_not_notification
   expect_any_instance_of(Slack::Web::Client).to_not receive(:chat_postMessage)
   post api_v1_notifications_filter_path, params: params, as: :json
 end
+
+def mock_channel_response(return_value)
+  allow_any_instance_of(SlackNotificationService).to receive(:search_channel)
+  .and_return(return_value)
+end
+
