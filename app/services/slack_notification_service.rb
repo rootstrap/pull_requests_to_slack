@@ -98,11 +98,11 @@ class SlackNotificationService
     repo_name = pr['name'].downcase
 
     if (repo_name.include? 'react') && (repo_name.include? 'native')
-      return "#{LANGUAGES[:'React-Native']}-code-review"
+      "#{LANGUAGES[:'React-Native']}-code-review"
     elsif repo_name.include? 'react'
-      return "#{LANGUAGES[:React]}-code-review"
+      "#{LANGUAGES[:React]}-code-review"
     elsif repo_name.include? 'node'
-      return "#{LANGUAGES[:Node]}-code-review"
+      "#{LANGUAGES[:Node]}-code-review"
     end
   end
 end

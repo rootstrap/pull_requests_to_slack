@@ -39,14 +39,14 @@ describe 'GET api/v1/notifications_filter', type: :request do
       expect_notification
     end
 
-    context 'when repository is has angular code' do
+    context 'when repository includes angular code' do
       it 'sends message to correct channel' do
         params[:repository][:name] = 'example-Angular-repository'
         expect_notification(text: "#{pull_request_link} <@user> Tiny PR :angular:")
       end
     end
 
-    context 'repo name includes a technology' do
+    context 'repository name includes a technology' do
       before { mock_channel_response(channel) }
 
       context 'technology is react native' do
