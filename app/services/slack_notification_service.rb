@@ -56,10 +56,10 @@ class SlackNotificationService
   def channel(params)
     lang = LANGUAGES[params.dig('repository', 'language')&.to_sym]
     repository_info = params.dig('repository')
-    channel = build_channel(lang, repository_info) if lang
+    channel = "##{build_channel(lang, repository_info)}" if lang
 
     if search_channel(channel)
-      "##{channel}"
+      channel
     else
       DEFAULT_CHANNEL
     end
@@ -96,14 +96,13 @@ class SlackNotificationService
 
   def js_channels(pr, lang)
     repo_name = pr['name'].downcase
-    technology = lang
 
-    if repo_name.include? 'react'
-      technology = LANGUAGES[:React]
+    if (repo_name.include? 'react') && (repo_name.include? 'native')
+      return "#{LANGUAGES[:'React-Native']}-code-review"
+    elsif repo_name.include? 'react'
+      return "#{LANGUAGES[:React]}-code-review"
     elsif repo_name.include? 'node'
-      technology = LANGUAGES[:Node]
+      return "#{LANGUAGES[:Node]}-code-review"
     end
-
-    "#{technology}-code-review"
   end
 end
