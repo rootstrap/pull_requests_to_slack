@@ -81,8 +81,8 @@ describe 'GET api/v1/notifications_filter', type: :request do
       let(:channel) { '#code-review' }
 
       it 'sends a slack notification with the PR link to #code-reviewers channel' do
-        params[:repository][:language] = 'Flutter'
-        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :flutter:")
+        params[:repository][:language] = 'Makefile'
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :makefile:")
       end
     end
 
