@@ -67,7 +67,8 @@ class SlackNotificationService
 
   def search_channel(channel)
     Slack::Web::Client.new.conversations_info(channel: channel)
-  rescue Exception
+  rescue Exception => e
+    Rails.logger.error("Error #{e.inspect} for channel #{channel}")
     nil
   end
 
