@@ -13,7 +13,7 @@ class SlackNotificationService
     'Python': 'python',
     'React': 'react',
     'React-Native': 'react-native',
-    'Flutter': 'flutter',
+    'Dart': 'dart',
     'Kotlin': 'kotlin',
     'Swift': 'swift',
     'TypeScript': 'typescript',
