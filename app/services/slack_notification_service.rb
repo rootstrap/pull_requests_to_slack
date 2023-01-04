@@ -54,8 +54,8 @@ class SlackNotificationService
   end
 
   def channel(params)
-    lang = LANGUAGES[params.dig('repository', 'language')&.to_sym]
-    repository_info = params.dig('repository')
+    lang = LANGUAGES[params.dig(:repository, :language)&.to_sym]
+    repository_info = params.dig(:repository)
     channel = "##{build_channel(lang, repository_info)}" if lang
 
     if search_channel(channel)
@@ -67,7 +67,7 @@ class SlackNotificationService
 
   def search_channel(channel)
     Slack::Web::Client.new.conversations_info(channel: channel)
-  rescue Slack::Web::Api::Errors::SlackError
+  rescue Exception
     nil
   end
 
@@ -95,7 +95,9 @@ class SlackNotificationService
   end
 
   def js_channels(pr, lang)
-    repo_name = pr['name'].downcase
+    return unless pr[:name]
+
+    repo_name = pr[:name].downcase
 
     if (repo_name.include? 'react') && (repo_name.include? 'native')
       "#{LANGUAGES[:'React-Native']}-code-review"
