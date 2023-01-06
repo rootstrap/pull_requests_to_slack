@@ -68,6 +68,29 @@ describe 'GET api/v1/notifications_filter', type: :request do
       end
     end
 
+    context 'with a technology topic' do
+      context 'with node topic' do
+        let(:channel) { '#node-code-review' }
+        before { mock_channel_response(channel) }
+
+        it 'sends a slack notification with the PR link and language emoji' do
+          params[:repository][:topics] = ['github', 'node', 'bot', 'slakbot']
+          expect_notification(text: "#{pull_request_link} <@user> Tiny PR :javascript:")
+        end
+      end
+
+      context 'with react-native topic' do
+        let(:channel) { '#react-native-code-review' }
+        before { mock_channel_response(channel) }
+
+        it 'sends a slack notification with the PR link and language emoji' do
+          params[:repository][:topics] = ['github', 'react-native', 'bot', 'slakbot']
+          params[:repository][:language] = 'TypeScript'
+          expect_notification(text: "#{pull_request_link} <@user> Tiny PR :ts:")
+        end
+      end
+    end
+
     context 'with a language not supported' do
       let(:channel) { '#code-review' }
 

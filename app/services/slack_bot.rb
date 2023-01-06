@@ -2,7 +2,7 @@ class SlackBot
   ON_HOLD = 'ON HOLD'.freeze
 
   EMOJI_HASH = {  'JavaScript' => ':javascript:',
-                  'TypeScript' => ':javascript:',
+                  'TypeScript' => ':ts:',
                   'Ruby' => ':ruby:',
                   'Java' => ':java:',
                   'Kotlin' => ':kotlin:',
