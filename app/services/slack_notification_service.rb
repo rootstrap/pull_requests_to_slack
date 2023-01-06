@@ -102,6 +102,10 @@ class SlackNotificationService
     repo_name = pr[:name].downcase
     topics = pr[:topics].present? ? pr[:topics] : []
 
+    js_repo_name(repo_name, topics)
+  end
+
+  def js_repo_name(repo_name, topics)
     if ((repo_name.include? 'react') && (repo_name.include? 'native')) || (topics.include? 'react-native')
       "#{LANGUAGES[:'React-Native']}-code-review"
     elsif (repo_name.include? 'react') || (topics.include? 'react')
