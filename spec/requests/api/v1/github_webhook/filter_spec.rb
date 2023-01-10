@@ -46,6 +46,21 @@ describe 'GET api/v1/notifications_filter', type: :request do
       end
     end
 
+    context 'when repository is a devops repository' do
+      let(:channel) { '#devops-code-review' }
+      before { mock_channel_response(channel) }
+
+      it 'sends message to correct channel' do
+        params[:repository][:name] = 'repository-devops-project '
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :javascript:")
+      end
+
+      it 'sends message to correct channel' do
+        params[:repository][:name] = 'repository-infrastructure '
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :javascript:")
+      end
+    end
+
     context 'repository name includes a technology' do
       before { mock_channel_response(channel) }
 

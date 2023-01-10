@@ -57,7 +57,7 @@ class SlackNotificationService
   def channel(params)
     lang = LANGUAGES[params.dig(:repository, :language)&.to_sym]
     repository_info = params.dig(:repository)
-    channel = "##{build_channel(lang, repository_info)}" if lang
+    channel = "##{build_channel(lang, repository_info)}"
 
     if search_channel(channel)
       channel
@@ -74,9 +74,23 @@ class SlackNotificationService
   end
 
   def build_channel(lang, repository_info)
+    return 'devops-code-review' if devops_pr?(repository_info)
+
+    return build_lang_channel(lang, repository_info) if lang
+  end
+
+  def build_lang_channel(lang, repository_info)
     return js_channels(repository_info, lang) if %w[javascript typescript].include?(lang)
 
     "#{lang}-code-review"
+  end
+
+  def devops_pr?(repository_info)
+    return false unless repository_info
+
+    repo_name = repository_info[:name]
+
+    (repo_name&.include? 'devops') || (repo_name&.include? 'infra')
   end
 
   def filter_opened_action
