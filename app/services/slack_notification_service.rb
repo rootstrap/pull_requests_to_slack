@@ -24,8 +24,10 @@ class SlackNotificationService
   attr_reader :action, :extra_params, :slack_bot, :pr
 
   def initialize(params)
-    @action = params[:github_webhook][:action]
-    @extra_params = params
+    @action = params.dig(:github_webhook, :action)
+    raise(ArgumentError, 'No action param set') unless @action
+
+    @extra_params = params || {}
     @slack_bot = SlackBot.new(channel: channel(params))
     @pr = PullRequest.new(params)
   end
@@ -56,7 +58,7 @@ class SlackNotificationService
 
   def channel(params)
     lang = LANGUAGES[params.dig(:repository, :language)&.to_sym]
-    repository_info = params.dig(:repository)
+    repository_info = params[:repository]
     channel = "##{build_channel(lang, repository_info)}"
 
     if search_channel(channel)
@@ -68,7 +70,7 @@ class SlackNotificationService
 
   def search_channel(channel)
     Slack::Web::Client.new.conversations_info(channel: channel)
-  rescue Exception => e
+  rescue StandardError => e
     Rails.logger.error("Error #{e.inspect} for channel #{channel}")
     nil
   end
@@ -110,11 +112,11 @@ class SlackNotificationService
     slack_bot.add_merge_emoji matches
   end
 
-  def js_channels(pr, lang)
-    return unless pr[:name]
+  def js_channels(pull_request, _lang)
+    return unless pull_request[:name]
 
-    repo_name = pr[:name].downcase
-    topics = pr[:topics].present? ? pr[:topics] : []
+    repo_name = pull_request[:name].downcase
+    topics = pull_request[:topics].present? ? pull_request[:topics] : []
 
     js_repo_name(repo_name, topics)
   end

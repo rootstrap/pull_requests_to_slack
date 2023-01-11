@@ -4,7 +4,7 @@ class PullRequest
               :url, :body, :language, :repo_name
 
   def initialize(params)
-    @info = params.dig(:pull_request)
+    @info = params.fetch(:pull_request, {})
     @username = @info.dig(:user, :login)
     @avatar_url = @info.dig(:user, :avatar_url)
     @webhook_label = params.dig(:github_webhook, :label, :name)
