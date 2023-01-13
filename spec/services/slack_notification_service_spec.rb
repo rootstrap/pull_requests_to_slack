@@ -38,7 +38,7 @@ describe SlackNotificationService do
       context 'with a PR from a blacklisted user' do
         let!(:user) { User.create(github_name: 'pepe', blacklisted: true) }
 
-        it 'does NOT sends the message' do
+        it 'does NOT send the message' do
           expect_any_instance_of(described_class).not_to receive(:send)
           subject
         end
