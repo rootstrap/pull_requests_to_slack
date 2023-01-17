@@ -43,10 +43,6 @@ describe SlackNotificationService do
         stub_request(:post, 'https://slack.com/api/conversations.list')
           .to_return(status: 200, body: '', headers: {})
 
-        # stub_request(:post, 'https://slack.com/api/conversations.info')
-        #   .with(body: { 'channel': 'node-code-review' })
-        #   .to_return(status: 200, body: '', headers: {})
-
         stub_request(:post, 'https://slack.com/api/chat.postMessage')
           .with(
             body: {
