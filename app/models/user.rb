@@ -18,6 +18,8 @@
 #
 
 class User < ApplicationRecord
+  validates :github_name, uniqueness: true
+
   def full_name
     return github_name unless first_name.present?
 
