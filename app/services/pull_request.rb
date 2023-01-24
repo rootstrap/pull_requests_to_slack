@@ -34,7 +34,7 @@ class PullRequest
     label.downcase == ON_HOLD.downcase
   end
 
-  def blacklisted?
+  def blocklisted?
     User.where(github_name: username, blacklisted: true).exists?
   end
 end
