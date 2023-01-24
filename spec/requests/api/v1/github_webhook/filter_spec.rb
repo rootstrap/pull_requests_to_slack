@@ -278,7 +278,7 @@ def expect_not_notification
 end
 
 def mock_channel_response(return_value)
-  allow_any_instance_of(SlackNotificationService).to receive(:search_channel)
-  .and_return(return_value)
+  allow_any_instance_of(SlackNotificationService)
+    .to receive(:search_channel)
+    .and_return(return_value)
 end
-
