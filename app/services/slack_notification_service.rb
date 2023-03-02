@@ -91,8 +91,9 @@ class SlackNotificationService
     return false unless repository_info
 
     repo_name = repository_info[:name]
+    repo_topics = repository_info[:topics]
 
-    (repo_name&.include? 'devops') || (repo_name&.include? 'infra')
+    (repo_name&.include? 'devops') || (repo_name&.include? 'infra') || (repo_topics&.include? 'terraform')
   end
 
   def filter_opened_action

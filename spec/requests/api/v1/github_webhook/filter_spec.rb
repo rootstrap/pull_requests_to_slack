@@ -59,6 +59,11 @@ describe 'GET api/v1/notifications_filter', type: :request do
         params[:repository][:name] = 'repository-infrastructure '
         expect_notification(text: "#{pull_request_link} <@user> Tiny PR :javascript:")
       end
+
+      it 'sends message to correct channel' do
+        params[:repository][:topics] = ['terraform']
+        expect_notification(text: "#{pull_request_link} <@user> Tiny PR :javascript:")
+      end
     end
 
     context 'repository name includes a technology' do
