@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '~> 3.1.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.4', '>= 6.1.4.1'
+gem 'rails', '~> 6.1.7', '>= 6.1.7.1'
 
 gem 'activeadmin', '~> 2.9'
 gem 'devise', '~> 4.7', '>= 4.7.2'
