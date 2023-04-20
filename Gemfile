@@ -13,6 +13,9 @@ gem 'slack-ruby-client', '~> 1.0.0'
 gem 'sprockets', '~> 3.7.2'
 gem 'sass-rails', '~> 5.1'
 
+gem 'sentry-ruby'
+gem 'sentry-rails'
+
 group :development, :test do
   gem 'bullet', '~> 6.1'
   gem 'factory_bot_rails', '~> 5.1.1'
