@@ -1,28 +1,28 @@
 source 'https://rubygems.org'
-ruby '~> 2.7.2'
+ruby '~> 3.1.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.4', '>= 6.1.4.1'
+gem 'rails', '~> 6.1.7', '>= 6.1.7.1'
 
 gem 'activeadmin', '~> 2.9'
 gem 'devise', '~> 4.7', '>= 4.7.2'
 gem 'pg', '~> 1.1', '>= 1.1.4'
-gem 'puma', '~> 5.6'
+gem 'puma', '~> 5.6.2'
 gem 'rack-cors', '~> 1.0', '>= 1.0.6'
+gem 'sass-rails', '~> 5.1'
 gem 'slack-ruby-client', '~> 1.0.0'
 gem 'sprockets', '~> 3.7.2'
-gem 'sass-rails', '~> 5.1'
 
 gem 'sentry-ruby'
 gem 'sentry-rails'
 
 group :development, :test do
   gem 'bullet', '~> 6.1'
-  gem 'factory_bot_rails', '~> 5.1.1'
-  gem 'pry-byebug', '~> 3.3.0', platform: :mri
-  gem 'rspec-core', '~> 3.10.0'
-  gem 'rspec-rails', '~> 4.1'
+  gem 'factory_bot_rails', '~> 6.2.0'
+  gem 'pry-byebug', '~> 3.10.1', platform: :mri
   gem 'pry-rails', '~> 0.3.9'
+  gem 'rspec-core', '~> 3.12.2'
+  gem 'rspec-rails', '~> 6.0.1'
 end
 
 group :development do
@@ -48,3 +48,5 @@ end
 group :assets do
   gem 'uglifier', '~> 4.2'
 end
+
+gem "ruby-lsp", "~> 0.3.8", :group => :development
