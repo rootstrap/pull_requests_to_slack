@@ -12,7 +12,6 @@ gem 'rack-cors', '~> 1.0', '>= 1.0.6'
 gem 'sass-rails', '~> 5.1'
 gem 'slack-ruby-client', '~> 1.0.0'
 gem 'sprockets', '~> 3.7.2'
-gem 'net-smtp', require: false
 
 group :development, :test do
   gem 'bullet', '~> 6.1'
