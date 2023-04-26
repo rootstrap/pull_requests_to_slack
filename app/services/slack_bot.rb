@@ -18,7 +18,7 @@ class SlackBot
                   'R' => ':r-lang:',
                   'PHP' => ':php:' }.freeze
 
-  attr_reader :client, :channel
+  attr_reader :channel
 
   def initialize(channel:)
     raise ArgumentError.new('Invalid channel') unless channel.present?
@@ -28,7 +28,7 @@ class SlackBot
   end
 
   def notify(message, username, avatar_url)
-    client.chat_postMessage(channel: @channel, text: message,
+    @client.chat_postMessage(channel: @channel, text: message,
                             username: username, icon_url: avatar_url)
   end
 
@@ -44,7 +44,7 @@ class SlackBot
   end
 
   def add_emoji(emoji, timestamp)
-    client.reactions_add(name: emoji,
+    @client.reactions_add(name: emoji,
                          channel: @channel,
                          timestamp: timestamp,
                          as_user: false)
@@ -60,7 +60,7 @@ class SlackBot
     matches.each do |match|
       timestamp = match[:ts]
       begin
-        client.chat_delete(channel: @channel, ts: timestamp) if timestamp
+        @client.chat_delete(channel: @channel, ts: timestamp) if timestamp
       rescue StandardError => e
         puts "An error of type #{e.class} happened, message is #{e.message}."
       end
