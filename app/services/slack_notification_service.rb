@@ -61,10 +61,12 @@ class SlackNotificationService
   def channel(params)
     lang = LANGUAGES[params.dig(:repository, :language)&.to_sym]
     repository_info = params[:repository]
-    channel = "##{build_channel(lang, repository_info)}"
 
-    if search_channel(channel)
-      channel
+    channel = build_channel(lang, repository_info)
+    channel_name = "##{channel}"
+
+    if channel.present? && search_channel(channel_name)
+      channel_name
     else
       DEFAULT_CHANNEL
     end
