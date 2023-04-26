@@ -93,7 +93,9 @@ class SlackNotificationService
     repo_name = repository_info[:name]
     repo_topics = repository_info[:topics]
 
-    (repo_name&.include? 'devops') || (repo_name&.include? 'infra') || (repo_topics&.include? 'terraform')
+    (repo_name&.include? 'devops') ||
+      (repo_name&.include? 'infra') ||
+      (repo_topics&.include? 'terraform')
   end
 
   def filter_opened_action
@@ -122,8 +124,11 @@ class SlackNotificationService
     js_repo_name(repo_name, topics)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def js_repo_name(repo_name, topics)
-    if ((repo_name.include? 'react') && (repo_name.include? 'native')) || (topics.include? 'react-native')
+    if ((repo_name.include? 'react') &&
+      (repo_name.include? 'native')) ||
+       (topics.include? 'react-native')
       "#{LANGUAGES[:'React-Native']}-code-review"
     elsif (repo_name.include? 'react') || (topics.include? 'react')
       "#{LANGUAGES[:React]}-code-review"
@@ -131,4 +136,5 @@ class SlackNotificationService
       "#{LANGUAGES[:Node]}-code-review"
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 end
