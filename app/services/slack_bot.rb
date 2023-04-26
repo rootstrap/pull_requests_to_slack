@@ -20,9 +20,11 @@ class SlackBot
 
   attr_reader :client, :channel
 
-  def initialize(params)
+  def initialize(channel:)
+    raise ArgumentError.new('Invalid channel') unless channel.present?
+
     @client = Slack::Web::Client.new
-    @channel = params[:channel]
+    @channel = channel
   end
 
   def notify(message, username, avatar_url)
