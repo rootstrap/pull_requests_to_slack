@@ -8,6 +8,7 @@ module Api
       def filter
         slack_notification_service = SlackNotificationService.new(params)
         slack_notification_service.send_notification
+        head :no_content
       end
     end
   end
