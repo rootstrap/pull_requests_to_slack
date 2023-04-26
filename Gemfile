@@ -10,7 +10,7 @@ gem 'pg', '~> 1.1', '>= 1.1.4'
 gem 'puma', '~> 5.6.2'
 gem 'rack-cors', '~> 1.0', '>= 1.0.6'
 gem 'sass-rails', '~> 5.1'
-gem 'slack-ruby-client', '~> 1.0.0'
+gem 'slack-ruby-client', '~> 2.0.0'
 gem 'sprockets', '~> 3.7.2'
 
 group :development, :test do
