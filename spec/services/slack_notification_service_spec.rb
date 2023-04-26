@@ -1,11 +1,17 @@
 require 'rails_helper'
 
 describe SlackNotificationService do
+  before do
+    stub_request(:post, 'https://slack.com/api/conversations.list')
+      .to_return(status: 200, body: '', headers: {})
+  end
+
   describe 'initialization' do
     subject { described_class.new({}) }
 
-    it 'raise an error if no action is set in params' do
-      expect { subject }.to raise_error(ArgumentError)
+    it 'logs an error if no "action" is set in params' do
+      expect(Rails.logger).to receive(:warn).with('Warning! No action found on params: [{}]')
+      subject
     end
   end
 
@@ -40,9 +46,6 @@ describe SlackNotificationService do
       end
 
       before do
-        stub_request(:post, 'https://slack.com/api/conversations.list')
-          .to_return(status: 200, body: '', headers: {})
-
         stub_request(:post, 'https://slack.com/api/chat.postMessage')
           .with(
             body: {

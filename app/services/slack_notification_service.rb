@@ -25,7 +25,9 @@ class SlackNotificationService
 
   def initialize(params)
     @action = params.dig(:github_webhook, :action)
-    raise(ArgumentError, 'No action param set') unless @action
+    if @action.blank?
+      Rails.logger.warn("Warning! No action found on params: [#{params}]")
+    end
 
     @extra_params = params || {}
     @slack_bot = SlackBot.new(channel: channel(params))
