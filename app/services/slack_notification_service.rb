@@ -35,7 +35,7 @@ class SlackNotificationService
   end
 
   def send_notification
-    return if pr.blacklisted?
+    return if pr.blocklisted?
 
     send(ACTION_METHODS[action]) if ACTION_METHODS.key? action
   end
