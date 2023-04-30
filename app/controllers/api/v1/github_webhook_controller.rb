@@ -6,6 +6,7 @@ module Api
       skip_before_action :authenticate_user!
 
       def filter
+        puts 'this pr is only for test purposes'
         slack_notification_service = SlackNotificationService.new(params)
         slack_notification_service.send_notification
         head :no_content
